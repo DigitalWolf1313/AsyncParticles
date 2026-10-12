@@ -31,10 +31,7 @@ import org.jetbrains.annotations.NotNull;
 import oshi.SystemInfo;
 import oshi.hardware.CentralProcessor;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Queue;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinWorkerThread;
@@ -409,6 +406,9 @@ public class AsyncTickBehavior {
 	}
 
 	public Set<Particle> getSyncParticles(ParticleRenderType renderType) {
+		if (!ThreadUtil.isOnMainThread()) {
+			return syncParticles.getOrDefault(renderType, Collections.emptySet());
+		}
 		return syncParticles.computeIfAbsent(renderType, k -> new ReferenceOpenHashSet<>());
 	}
 
@@ -422,6 +422,9 @@ public class AsyncTickBehavior {
 
 	@SuppressWarnings("unchecked")
 	public <T extends Particle> Set<T> getSyncGpuParticles(ParticleRenderType renderType) {
+		if (!ThreadUtil.isOnMainThread()) {
+			return (Set<T>) syncGpuParticles.getOrDefault(renderType, Collections.emptySet());
+		}
 		return (Set<T>) syncGpuParticles.computeIfAbsent(renderType, k -> new ReferenceOpenHashSet<>());
 	}
 }
