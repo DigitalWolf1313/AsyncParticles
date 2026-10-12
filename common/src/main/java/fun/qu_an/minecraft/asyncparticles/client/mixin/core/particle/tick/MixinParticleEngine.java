@@ -122,7 +122,7 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 				if (tickAsync
 //					&& ConfigHelper.isAsyncTickParticle() // tested in asyncparticles$canTickAsync()
 					&& tickBehavior.shouldSync(((ParticleAddon) particle).asyncparticles$getRealClass())) {
-					if (GpuParticleBehavior.getInstance().canRenderFast(particle)) {
+					if (ConfigHelper.isGpuParticles() && GpuParticleBehavior.getInstance().canRenderFast(particle)) {
 						tickBehavior.getSyncGpuParticles(particle.getRenderType()).add(particle);
 					} else if (asyncAll) {
 						tickBehavior.getSyncParticles(particle.getRenderType()).add(particle);

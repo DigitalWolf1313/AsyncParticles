@@ -450,13 +450,15 @@ class ClothConfigMenus {
 					IRONS_SPELLBOOKS_LESS_THAN_3_13_0) ||
 					MAKE_BUBBLES_POP_LOADED ||
 					COSYCRITTERS_LOADED ||
-					IMMERSIVE_PORTALS_LOADED) {
+					IMMERSIVE_PORTALS_LOADED ||
+					SUBTLE_EFFECTS_LOADED) {
 					return limitedTooltip(
 						Component.translatable("config.asyncparticles.mixin.safeClassInstanceMultiMap.tooltip"),
 						IRONS_SPELLBOOKS_LOADED ? "Irons Spellbooks" : null,
 						MAKE_BUBBLES_POP_LOADED ? "Make Bubbles Pop" : null,
 						COSYCRITTERS_LOADED ? "CosyCritters" : null,
-						IMMERSIVE_PORTALS_LOADED ? "Immersive Portals" : null
+						IMMERSIVE_PORTALS_LOADED ? "Immersive Portals" : null,
+						SUBTLE_EFFECTS_LOADED ? "Subtle Effects" : null
 					);
 				} else {
 					return Optional.of(new Component[]{
@@ -471,7 +473,8 @@ class ClothConfigMenus {
 				!IRONS_SPELLBOOKS_LESS_THAN_3_13_0) &&
 				!MAKE_BUBBLES_POP_LOADED &&
 				!COSYCRITTERS_LOADED &&
-				!IMMERSIVE_PORTALS_LOADED)
+				!IMMERSIVE_PORTALS_LOADED &&
+				!SUBTLE_EFFECTS_LOADED)
 			.build(), originalMixinConfig.isSafeClassInstanceMultiMap()));
 		mixinCategory.addEntry(modifyOriginal(entryBuilder
 			.startBooleanToggle(Component.translatable("config.asyncparticles.mixin.safeBlockEntityMap"),

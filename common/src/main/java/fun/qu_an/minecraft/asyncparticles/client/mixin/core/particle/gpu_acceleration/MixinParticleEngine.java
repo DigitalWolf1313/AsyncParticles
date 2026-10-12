@@ -51,19 +51,6 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 		return true;
 	}
 
-	@Dynamic
-	@WrapOperation(method = "tick", at = @At(value = "INVOKE", target = "Ljava/util/Set;add(Ljava/lang/Object;)Z"))
-	public boolean wrapAdd(Set<?> instance, Object e, Operation<Boolean> original) {
-		if (ConfigHelper.isGpuParticles()
-			&& e instanceof TextureSheetParticle tsp
-			&& GpuParticleBehavior.getInstance().canRenderFast(tsp)) {
-			AsyncTickBehavior.getInstance().getSyncGpuParticles(tsp.getRenderType()).add(tsp);
-		} else {
-			original.call(instance, e);
-		}
-		return false;
-	}
-
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	@Inject(method = "tick", order = 500, at = @At("TAIL"))
 	private void tickTail(CallbackInfo ci) {
