@@ -1,4 +1,5 @@
 {
+  "config.asyncparticles.deprecated": "Obsoleto.",
   "config.asyncparticles.not-implemented": "Todavía no está implementado",
   "config.asyncparticles.category.particle": "Partícula",
   "config.asyncparticles.particle.particleLimit": "Límite de partículas",
@@ -55,6 +56,9 @@
   "config.asyncparticles.mod-compat.valkyrienskies.rainEffect.tooltip": "Controla cuándo aparecen los efectos de lluvia\nen los barcos de Valkyrien Skies.",
   "config.asyncparticles.mod-compat.valkyrienskies.fixParticleLights": "Corregir la iluminación de partículas",
   "config.asyncparticles.mod-compat.valkyrienskies.fixParticleLights.tooltip": "Corrige los problemas de iluminación de las partículas en los barcos.",
+  "config.asyncparticles.category.mod-compat.sable": "Create: Aeronautics (Sable)",
+  "config.asyncparticles.mod-compat.sable.fixParticleLights": "Iluminación mejorada de partículas",
+  "config.asyncparticles.mod-compat.sable.fixParticleLights.tooltip": "Aumenta la distancia a la que las partículas generadas en subniveles reciben iluminación de dichos subniveles.",
   "config.asyncparticles.category.mod-compat.create": "Create",
   "config.asyncparticles.mod-compat.create.rainEffect": "Efecto de lluvia",
   "config.asyncparticles.mod-compat.create.rainEffect.tooltip": "Controla cuándo aparecen los efectos de lluvia\nen las contraptions de Create.",
