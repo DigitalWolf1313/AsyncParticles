@@ -382,6 +382,7 @@ class ClothConfigMenus {
 					.withStyle(ChatFormatting.DARK_RED),
 				Component.translatable("config.asyncparticles.mod-compat.polytone.mixin.tooltip"))
 			.setSaveConsumer(displayMixinConfig::setPolytoneCompatEnabled)
+			.setRequirement(() -> ModListHelper.POLYTONE_LATER_THAN_5)
 			.requireRestart()
 			.build(), originalMixinConfig.isPolytoneCompatEnabled());
 		AbstractConfigListEntry<Boolean> polytoneTakeover = modifyOriginal(entryBuilder
