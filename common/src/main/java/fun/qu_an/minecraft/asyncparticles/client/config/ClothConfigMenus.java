@@ -383,10 +383,14 @@ class ClothConfigMenus {
 			.setDefaultValue(defaultMixinConfig.isSafeClassInstanceMultiMap())
 			.setSaveConsumer(displayMixinConfig::setSafeClassInstanceMultiMap)
 			.setTooltipSupplier(() -> {
-				if (MAKE_BUBBLES_POP_LOADED || COSYCRITTERS_LOADED) {
+				if (MAKE_BUBBLES_POP_LOADED
+					|| COSYCRITTERS_LOADED
+					|| SUBTLE_EFFECTS_LOADED) {
 					return limitedTooltip(Component.translatable("config.asyncparticles.mixin.safeClassInstanceMultiMap.tooltip"),
 						MAKE_BUBBLES_POP_LOADED ? "Make Bubbles Pop" : null,
-						COSYCRITTERS_LOADED ? "CosyCritters" : null);
+						COSYCRITTERS_LOADED ? "CosyCritters" : null,
+						SUBTLE_EFFECTS_LOADED ? "Subtle Effects" : null
+					);
 				} else {
 					return Optional.of(new Component[]{
 						Component.translatable("text.cloth-config.restart_required")
@@ -396,7 +400,9 @@ class ClothConfigMenus {
 				}
 			})
 			.requireRestart()
-			.setRequirement(() -> !MAKE_BUBBLES_POP_LOADED && !COSYCRITTERS_LOADED)
+			.setRequirement(() -> !MAKE_BUBBLES_POP_LOADED
+				&& !COSYCRITTERS_LOADED
+				&& !SUBTLE_EFFECTS_LOADED)
 			.build(), originalMixinConfig.isSafeClassInstanceMultiMap()));
 		mixinCategory.addEntry(modifyOriginal(entryBuilder
 			.startBooleanToggle(Component.translatable("config.asyncparticles.mixin.safeBlockEntityMap"),

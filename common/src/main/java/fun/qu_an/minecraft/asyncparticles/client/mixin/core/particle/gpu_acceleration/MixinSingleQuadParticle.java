@@ -155,7 +155,7 @@ public abstract class MixinSingleQuadParticle extends Particle implements GpuPar
 
 	@Override
 	public int asyncparticles$getColor(int oColor) {
-		return oColor;
+		return ARGB.color((int) (alpha * 255.0f), oColor);
 	}
 
 	@Override
