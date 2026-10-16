@@ -18,6 +18,7 @@
     "compat.cloth_config.BaseListEntryAccessor",
     "compat.cloth_config.MixinAbstractListListEntry",
     "compat.cloth_config.MixinBooleanListEntry",
+    "compat.cloth_config.MixinClothConfigListWidget",
     "compat.cloth_config.MixinSelectionListEntry",
     "compat.cloth_config.MixinTextFieldListEntry",
     "compat.cosycritters.MixinBirdParticle",

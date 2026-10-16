@@ -72,11 +72,11 @@ public class CompatibilityTryItButton extends Button {
 	@Override
 	protected void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float f) {
 		this.setMessage(this.getComponent());
+		super.renderWidget(graphics, mouseX, mouseY, f);
 		if (isHovered()) {
 			List<FormattedCharSequence> lines = Minecraft.getInstance().font.split(select.getTooltipComponent(), owner.width / 2);
-			graphics.renderTooltip(Minecraft.getInstance().font, lines, mouseX, mouseY);
+			owner.setTooltipForNextRenderPass(lines);
 		}
-		super.renderWidget(graphics, mouseX, mouseY, f);
 	}
 
 	private Component getComponent() {
