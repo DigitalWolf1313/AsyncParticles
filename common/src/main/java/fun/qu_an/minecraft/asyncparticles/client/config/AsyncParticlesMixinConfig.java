@@ -128,7 +128,7 @@ public class AsyncParticlesMixinConfig {
 		}
 
 		private int version = 0;
-		boolean safeClassInstanceMultiMap = MAKE_BUBBLES_POP_LOADED || COSYCRITTERS_LOADED;
+		boolean safeClassInstanceMultiMap = MAKE_BUBBLES_POP_LOADED || COSYCRITTERS_LOADED || SUBTLE_EFFECTS_LOADED;
 		boolean safeBlockEntityMap = false;
 		boolean safeLegacyRandomSource = true;
 
@@ -197,7 +197,7 @@ public class AsyncParticlesMixinConfig {
 			} catch (NumberFormatException ignored) {
 			}
 			MixinConfigObj defaultConfig = new MixinConfigObj();
-			safeClassInstanceMultiMap = MAKE_BUBBLES_POP_LOADED || COSYCRITTERS_LOADED ||
+			safeClassInstanceMultiMap = MAKE_BUBBLES_POP_LOADED || COSYCRITTERS_LOADED || SUBTLE_EFFECTS_LOADED ||
 				getBoolean(properties, "safeClassInstanceMultiMap", defaultConfig.safeClassInstanceMultiMap);
 			safeBlockEntityMap = getBoolean(properties, "safeBlockEntityMap", defaultConfig.safeBlockEntityMap);
 			safeLegacyRandomSource = getBoolean(properties, "safeLegacyRandomSource", defaultConfig.safeLegacyRandomSource);
