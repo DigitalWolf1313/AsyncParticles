@@ -141,6 +141,7 @@ public class AsyncParticlesMixinConfig {
 		{
 			particle$noCulling.add("com.lowdragmc.photon.client.gameobject.FXObject");
 			particle$noCulling.add("net.bettercombat.client.particle.SlashParticle");
+			particle$noCulling.add("com.xm666.realisticcruelty.particle.BloodSplatParticle");
 		}
 
 		private Set<String> particle$noLightCache = new LinkedHashSet<>();
