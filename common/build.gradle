@@ -87,9 +87,6 @@ dependencies {
     /* Immediately Fast */
     modCompileOnly "maven.modrinth:immediatelyfast:1.6.10+1.21.1-fabric"
 
-    /* More Culling */
-    modCompileOnly "maven.modrinth:moreculling:y4J2jK6V" // 1.0.7
-
     /* Figura */
     modCompileOnly "maven.modrinth:figura:0.1.5+1.21.1"
 

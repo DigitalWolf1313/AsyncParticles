@@ -15,7 +15,6 @@ public class AsyncParticlesMixinCanceller implements MixinCanceller {
 		return switch (mixinClassName) {
 			case "com.moepus.flerovium.mixins.Particle.SingleQuadParticleMixin",
 //				 "net.diebuddies.mixins.ocean.MixinParticleEngine", // Physics mod
-				 "ca.fxco.moreculling.mixin.LevelRenderer_rainMixin",
 				 "forge.me.thosea.badoptimizations.mixin.MixinParticleManager",
 				 "fabric.me.thosea.badoptimizations.mixin.MixinParticleManager"
 				-> true;
