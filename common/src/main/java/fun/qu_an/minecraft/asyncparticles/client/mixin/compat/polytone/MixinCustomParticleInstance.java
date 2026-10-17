@@ -14,8 +14,8 @@ import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleInstance
 import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleType;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.world.level.block.state.BlockState;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
@@ -29,18 +29,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CustomParticleInstance.class)
 public abstract class MixinCustomParticleInstance extends TextureSheetParticle implements PolytoneParticleAddon, ParticleAddon, LightCachedParticleAddon {
-	@Shadow(remap = false)
-	@Final
-	public CustomParticleType type;
-	@Shadow(remap = false)
-	@Final
-	protected BakedModel model;
-	@Unique
-	private boolean asyncparticles$lockTickAndRender;
-
 	protected MixinCustomParticleInstance(ClientLevel level, double x, double y, double z) {
 		super(level, x, y, z);
 	}
+
+	@Shadow(remap = false)
+	@Final
+	public CustomParticleType type;
+	@Unique
+	private boolean asyncparticles$lockTickAndRender;
+
+	@Shadow
+	public abstract ParticleRenderType getRenderType();
 
 	@Override
 	@Invoker(value = "initTick", remap = false)
@@ -50,7 +50,7 @@ public abstract class MixinCustomParticleInstance extends TextureSheetParticle i
 	public boolean asyncparticles$canRenderFast() {
 		return ConfigHelper.isPolytoneGpuRendering()
 			&& ((Object) this).getClass() == CustomParticleInstance.class
-			&& model == null
+			&& getRenderType() != ParticleRenderType.CUSTOM
 			&& ((PolytoneParticleTypeAddon) type).asyncparticles$isSimpleQuad();
 	}
 
@@ -76,7 +76,7 @@ public abstract class MixinCustomParticleInstance extends TextureSheetParticle i
 	private void preserveCustomGeometry(CallbackInfo ci) {
 		asyncparticles$lockTickAndRender = ConfigHelper.isAsyncParticleTick() && ConfigHelper.isPolytoneAsyncTick()
 			&& !ConfigHelper.isPolytoneGpuOnlyAsyncTick() && !asyncparticles$canRenderFast();
-		if (model != null || !((PolytoneParticleTypeAddon) type).asyncparticles$isSimpleQuad()) {
+		if (getRenderType() == ParticleRenderType.CUSTOM || !((PolytoneParticleTypeAddon) type).asyncparticles$isSimpleQuad()) {
 			this.asyncparticles$setNoCulling();
 		}
 	}
