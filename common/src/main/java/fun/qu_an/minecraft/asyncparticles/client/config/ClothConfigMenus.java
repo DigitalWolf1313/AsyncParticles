@@ -331,7 +331,14 @@ class ClothConfigMenus {
 				.setDefaultValue(defaultConfig.rendering.tickRendererOnMainThread)
 				.setTooltip(Component.translatable("config.asyncparticles.rendering.tickRendererOnMainThread.tooltip"))
 				.setSaveConsumer(newValue -> displayConfig.rendering.tickRendererOnMainThread = newValue)
-				.build(), originalConfig.rendering.tickRendererOnMainThread));
+				.build(), originalConfig.rendering.tickRendererOnMainThread))
+			.addEntry(modifyOriginal(entryBuilder
+				.startBooleanToggle(Component.translatable("config.asyncparticles.rendering.cullWeathers"),
+					displayConfig.rendering.cullWeathers)
+				.setDefaultValue(defaultConfig.rendering.cullWeathers)
+				.setTooltip(Component.translatable("config.asyncparticles.rendering.cullWeathers.tooltip"))
+				.setSaveConsumer(newValue -> displayConfig.rendering.cullWeathers = newValue)
+				.build(), originalConfig.rendering.cullWeathers));
 		// endregion
 	}
 
