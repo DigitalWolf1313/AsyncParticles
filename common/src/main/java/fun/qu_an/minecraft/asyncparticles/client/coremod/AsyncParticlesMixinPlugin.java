@@ -66,7 +66,11 @@ public class AsyncParticlesMixinPlugin implements IMixinConfigPlugin {
 			throw new IllegalArgumentException("Unknown mixin: " + mixinClassName);
 		}
 		return switch (split[0]) {
-			case "core", "off_thread_access" -> true;
+			case "core" -> switch (split[1]) {
+				case "weather" -> !"MixinLevelRenderer_WeatherCulling".equals(split[2]) || !MORE_CULLING_LOADED;
+				default -> true;
+			};
+			case "off_thread_access" -> true;
 			case "conditional" -> switch (split[1]) {
 				case "MixinClassInstanceMultiMap_SafeClassInstanceMultiMap_On" ->
 					MixinConfigHelper.isSafeClassInstanceMultiMap();

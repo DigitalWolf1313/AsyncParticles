@@ -17,7 +17,6 @@ public class AsyncParticlesMixinCanceller implements MixinCanceller {
 				 "com.moepus.flerovium.mixins.Particle.ParticleMixin",
 //				 "net.diebuddies.mixins.ocean.MixinParticleEngine", // Physics mod
 				 "indi.yunherry.weather.mixin.MixinParticle",
-				 "ca.fxco.moreculling.mixin.WorldRenderer_rainMixin",
 				 "forge.me.thosea.badoptimizations.mixin.MixinParticleManager",
 				 "fabric.me.thosea.badoptimizations.mixin.MixinParticleManager"
 				-> true;

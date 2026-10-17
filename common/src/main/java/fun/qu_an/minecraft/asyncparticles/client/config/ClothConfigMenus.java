@@ -336,8 +336,20 @@ class ClothConfigMenus {
 				.startBooleanToggle(Component.translatable("config.asyncparticles.rendering.cullWeathers"),
 					displayConfig.rendering.cullWeathers)
 				.setDefaultValue(defaultConfig.rendering.cullWeathers)
-				.setTooltip(Component.translatable("config.asyncparticles.rendering.cullWeathers.tooltip"))
+				.setTooltipSupplier(() -> {
+					if (Backends.supportsGpuAcceleration()) {
+						return Optional.of(new MutableComponent[]{Component.translatable("config.asyncparticles.rendering.cullWeathers.tooltip")});
+					} else {
+						return Optional.of(new MutableComponent[]{
+							Component.translatable("config.asyncparticles.rendering.cullWeathers.tooltip")
+								.withStyle(ChatFormatting.STRIKETHROUGH),
+							Component.translatable("config.asyncparticles.limited", "More Culling")
+								.withStyle(ChatFormatting.YELLOW)
+						});
+					}
+				})
 				.setSaveConsumer(newValue -> displayConfig.rendering.cullWeathers = newValue)
+				.setRequirement(() -> !MORE_CULLING_LOADED)
 				.build(), originalConfig.rendering.cullWeathers));
 		// endregion
 	}
