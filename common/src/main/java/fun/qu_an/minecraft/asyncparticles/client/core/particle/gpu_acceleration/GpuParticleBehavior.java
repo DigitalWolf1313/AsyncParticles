@@ -87,7 +87,7 @@ public class GpuParticleBehavior {
 
 	public boolean canRenderFast(TextureSheetParticle tsp) {
 		if (PolytoneEarlyCompat.isAvailable() && tsp instanceof PolytoneParticleAddon polytone) {
-			return polytone.asyncparticles$canRenderFast();
+			return ConfigHelper.isPolytoneGpuRendering() && polytone.asyncparticles$canRenderFast();
 		}
 		if (tsp.getFacingCameraMode() != TextureSheetParticle.FacingCameraMode.LOOKAT_XYZ) {
 			return false;

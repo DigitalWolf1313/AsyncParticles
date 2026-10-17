@@ -4,31 +4,31 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import fun.qu_an.minecraft.asyncparticles.client.addon.LightCachedParticleAddon;
+import fun.qu_an.minecraft.asyncparticles.client.addon.GpuParticleAddon;
 import fun.qu_an.minecraft.asyncparticles.client.addon.ParticleAddon;
 import fun.qu_an.minecraft.asyncparticles.client.compat.polytone.PolytoneCompat;
 import fun.qu_an.minecraft.asyncparticles.client.compat.polytone.PolytoneParticleAddon;
 import fun.qu_an.minecraft.asyncparticles.client.compat.polytone.PolytoneParticleTypeAddon;
-import fun.qu_an.minecraft.asyncparticles.client.config.ConfigHelper;
 import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleInstance;
 import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleType;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CustomParticleInstance.class)
-public abstract class MixinCustomParticleInstance extends TextureSheetParticle implements PolytoneParticleAddon, ParticleAddon, LightCachedParticleAddon {
+public abstract class MixinCustomParticleInstance extends TextureSheetParticle implements PolytoneParticleAddon, ParticleAddon, GpuParticleAddon {
 	protected MixinCustomParticleInstance(ClientLevel level, double x, double y, double z) {
 		super(level, x, y, z);
 	}
@@ -38,18 +38,21 @@ public abstract class MixinCustomParticleInstance extends TextureSheetParticle i
 	public CustomParticleType type;
 	@Unique
 	private boolean asyncparticles$lockTickAndRender;
+	@Shadow(remap = false)
+	private float oAlpha;
+	@Shadow(remap = false)
+	private float oBCol;
+	@Shadow(remap = false)
+	private float oGCol;
+	@Shadow(remap = false)
+	private float oRCol;
 
 	@Shadow
 	public abstract ParticleRenderType getRenderType();
 
 	@Override
-	@Invoker(value = "initTick", remap = false)
-	public abstract void asyncparticles$initTick();
-
-	@Override
 	public boolean asyncparticles$canRenderFast() {
-		return ConfigHelper.isPolytoneGpuRendering()
-			&& ((Object) this).getClass() == CustomParticleInstance.class
+		return ((Object) this).getClass() == CustomParticleInstance.class
 			&& getRenderType() != ParticleRenderType.CUSTOM
 			&& ((PolytoneParticleTypeAddon) type).asyncparticles$isSimpleQuad();
 	}
@@ -57,6 +60,54 @@ public abstract class MixinCustomParticleInstance extends TextureSheetParticle i
 	@Override
 	public boolean asyncparticles$isStaticLight() {
 		return true;
+	}
+
+	@Override
+	public double asyncparticles$getXo() {
+		return xo + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().x;
+	}
+
+	@Override
+	public double asyncparticles$getYo() {
+		return yo + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().y;
+	}
+
+	@Override
+	public double asyncparticles$getZo() {
+		return zo + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().z;
+	}
+
+	@Override
+	public double asyncparticles$getX() {
+		return x + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().x;
+	}
+
+	@Override
+	public double asyncparticles$getY() {
+		return y + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().y;
+	}
+
+	@Override
+	public double asyncparticles$getZ() {
+		return z + ((PolytoneParticleTypeAddon) type).asyncparticles$getWorldOffset().z;
+	}
+
+	@Override
+	public int asyncparticles$getOColor() {
+		return FastColor.ABGR32.color(
+			(int) (oAlpha * 255.0f) & 255,
+			(int) (oBCol * 255.0f) & 255,
+			(int) (oGCol * 255.0f) & 255,
+			(int) (oRCol * 255.0f) & 255);
+	}
+
+	@Override
+	public int asyncparticles$getColor(int oColor) {
+		return FastColor.ABGR32.color(
+			(int) (alpha * 255.0f) & 255,
+			(int) (bCol * 255.0f) & 255,
+			(int) (gCol * 255.0f) & 255,
+			(int) (rCol * 255.0f) & 255);
 	}
 
 	@ModifyExpressionValue(method = "<init>", at = @At(value = "FIELD",
@@ -74,9 +125,10 @@ public abstract class MixinCustomParticleInstance extends TextureSheetParticle i
 
 	@Inject(method = "<init>", at = @At("RETURN"))
 	private void preserveCustomGeometry(CallbackInfo ci) {
-		asyncparticles$lockTickAndRender = ConfigHelper.isAsyncParticleTick() && ConfigHelper.isPolytoneAsyncTick()
-			&& !ConfigHelper.isPolytoneGpuOnlyAsyncTick() && !asyncparticles$canRenderFast();
-		if (getRenderType() == ParticleRenderType.CUSTOM || !((PolytoneParticleTypeAddon) type).asyncparticles$isSimpleQuad()) {
+		asyncparticles$lockTickAndRender = PolytoneCompat.shouldLock(this);
+		PolytoneParticleTypeAddon typeAddon = (PolytoneParticleTypeAddon) type;
+		if (getRenderType() == ParticleRenderType.CUSTOM || !typeAddon.asyncparticles$isSimpleQuad()
+			|| !Vec3.ZERO.equals(typeAddon.asyncparticles$getWorldOffset())) {
 			this.asyncparticles$setNoCulling();
 		}
 	}

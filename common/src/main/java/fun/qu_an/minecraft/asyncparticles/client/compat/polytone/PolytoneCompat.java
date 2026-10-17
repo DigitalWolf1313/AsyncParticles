@@ -15,8 +15,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class PolytoneCompat {
 	@SuppressWarnings("Convert2MethodRef")
-	public static final ParticleThreadLocal<BlockState> SPAWN_STATE = ParticleThreadLocal.withInitial(
-		ThreadUtil::isOnMainThread, () -> Blocks.AIR.defaultBlockState());
+	public static final ParticleThreadLocal<BlockState> SPAWN_STATE = PolytoneEarlyCompat.isAvailable() ? ParticleThreadLocal.withInitial(
+		ThreadUtil::isOnMainThread, () -> Blocks.AIR.defaultBlockState()) : null;
 
 	public static void awaitTicks() {
 		PolytoneAsyncParticleHandler.awaitTicks();
@@ -44,5 +44,11 @@ public class PolytoneCompat {
 		return particle instanceof PolytoneParticleAddon polytone
 			&& (!ConfigHelper.isPolytoneAsyncTick()
 			|| (ConfigHelper.isPolytoneGpuOnlyAsyncTick() && !polytone.asyncparticles$canRenderFast()));
+	}
+
+	public static boolean shouldLock(PolytoneParticleAddon particle) {
+		return ConfigHelper.isPolytoneAsyncTick()
+			&& (!ConfigHelper.isPolytoneGpuRendering()
+			|| (!ConfigHelper.isPolytoneGpuOnlyAsyncTick() && !particle.asyncparticles$canRenderFast()));
 	}
 }

@@ -401,24 +401,16 @@ class ClothConfigMenus {
 					.withStyle(ChatFormatting.DARK_RED),
 				Component.translatable("config.asyncparticles.mod-compat.polytone.mixin.tooltip"))
 			.setSaveConsumer(displayMixinConfig::setPolytoneCompatEnabled)
-			.setRequirement(() -> ModListHelper.POLYTONE_LATER_THAN_5)
+			.setRequirement(() -> ModListHelper.POLYTONE_LATER_THAN_5_1)
 			.requireRestart()
 			.build(), originalMixinConfig.isPolytoneCompatEnabled());
-		AbstractConfigListEntry<Boolean> polytoneTakeover = modifyOriginal(entryBuilder
-			.startBooleanToggle(Component.translatable("config.asyncparticles.mod-compat.polytone.takeover"),
-				displayConfig.polytone.takeover)
-			.setDefaultValue(defaultConfig.polytone.takeover)
-			.setTooltip(Component.translatable("config.asyncparticles.mod-compat.polytone.takeover.tooltip"))
-			.setSaveConsumer(newValue -> displayConfig.polytone.takeover = newValue)
-			.setRequirement(() -> PolytoneEarlyCompat.isAvailable())
-			.build(), originalConfig.polytone.takeover);
 		AbstractConfigListEntry<Boolean> polytoneAsyncTick = modifyOriginal(entryBuilder
 			.startBooleanToggle(Component.translatable("config.asyncparticles.mod-compat.polytone.asyncTick"),
 				displayConfig.polytone.asyncTick)
 			.setDefaultValue(defaultConfig.polytone.asyncTick)
 			.setTooltip(Component.translatable("config.asyncparticles.mod-compat.polytone.asyncTick.tooltip"))
 			.setSaveConsumer(newValue -> displayConfig.polytone.asyncTick = newValue)
-			.setRequirement(() -> PolytoneEarlyCompat.isAvailable() && polytoneTakeover.getValue())
+			.setRequirement(() -> polytoneMixin.getValue())
 			.build(), originalConfig.polytone.asyncTick);
 		AbstractConfigListEntry<Boolean> polytoneGpuRendering = modifyOriginal(entryBuilder
 			.startBooleanToggle(Component.translatable("config.asyncparticles.mod-compat.polytone.gpuRendering"),
@@ -426,7 +418,8 @@ class ClothConfigMenus {
 			.setDefaultValue(defaultConfig.polytone.gpuRendering)
 			.setTooltip(Component.translatable("config.asyncparticles.mod-compat.polytone.gpuRendering.tooltip"))
 			.setSaveConsumer(newValue -> displayConfig.polytone.gpuRendering = newValue)
-			.setRequirement(() -> PolytoneEarlyCompat.isAvailable() && polytoneTakeover.getValue())
+			.setRequirement(() -> polytoneMixin.getValue()
+				&& polytoneAsyncTick.getValue())
 			.build(), originalConfig.polytone.gpuRendering);
 		AbstractConfigListEntry<Boolean> polytoneGpuOnlyAsyncTick = modifyOriginal(entryBuilder
 			.startBooleanToggle(Component.translatable("config.asyncparticles.mod-compat.polytone.gpuOnlyAsyncTick"),
@@ -434,10 +427,10 @@ class ClothConfigMenus {
 			.setDefaultValue(defaultConfig.polytone.gpuOnlyAsyncTick)
 			.setTooltip(Component.translatable("config.asyncparticles.mod-compat.polytone.gpuOnlyAsyncTick.tooltip"))
 			.setSaveConsumer(newValue -> displayConfig.polytone.gpuOnlyAsyncTick = newValue)
-			.setRequirement(() -> PolytoneEarlyCompat.isAvailable() && polytoneTakeover.getValue() && polytoneAsyncTick.getValue() && polytoneGpuRendering.getValue())
+			.setRequirement(() -> polytoneMixin.getValue()
+				&& polytoneAsyncTick.getValue() && polytoneGpuRendering.getValue())
 			.build(), originalConfig.polytone.gpuOnlyAsyncTick);
 		polytoneEntries.add(polytoneMixin);
-		polytoneEntries.add(polytoneTakeover);
 		polytoneEntries.add(polytoneAsyncTick);
 		polytoneEntries.add(polytoneGpuRendering);
 		polytoneEntries.add(polytoneGpuOnlyAsyncTick);

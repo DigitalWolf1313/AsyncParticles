@@ -140,16 +140,12 @@ public class ConfigHelper {
 		return valkyrienSkies$fixParticleLights;
 	}
 
-	public static boolean isPolytoneTakeover() {
-		return polytone$takeover;
-	}
-
 	public static boolean isPolytoneAsyncTick() {
-		return isPolytoneTakeover() && polytone$asyncTick;
+		return isAsyncParticleTick() && polytone$asyncTick;
 	}
 
 	public static boolean isPolytoneGpuRendering() {
-		return isPolytoneTakeover() && polytone$gpuRendering;
+		return isPolytoneAsyncTick() && isGpuParticles() && polytone$gpuRendering;
 	}
 
 	public static boolean isPolytoneGpuOnlyAsyncTick() {

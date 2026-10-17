@@ -62,7 +62,7 @@
   "config.asyncparticles.category.mod-compat.create": "Create",
   "config.asyncparticles.category.mod-compat.polytone": "Polytone",
   "config.asyncparticles.mod-compat.polytone.mixin": "Enable Mixin",
-  "config.asyncparticles.mod-compat.polytone.mixin.tooltip": "Enables our mixins for Polytone 5.x.",
+  "config.asyncparticles.mod-compat.polytone.mixin.tooltip": "Enables our mixins for Polytone 5.1+.",
   "config.asyncparticles.mod-compat.polytone.takeover": "Optimize Particles",
   "config.asyncparticles.mod-compat.polytone.takeover.tooltip": "Enables our optimizations for Polytone particles.",
   "config.asyncparticles.mod-compat.polytone.asyncTick": "Take Over Async Particle Ticking",

@@ -1,17 +1,19 @@
 package fun.qu_an.minecraft.asyncparticles.client.mixin.compat.polytone;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
+import fun.qu_an.minecraft.asyncparticles.client.compat.polytone.PolytoneParticleAddon;
 import fun.qu_an.minecraft.asyncparticles.client.compat.polytone.PolytoneParticleTypeAddon;
 import fun.qu_an.minecraft.asyncparticles.client.config.ConfigHelper;
 import fun.qu_an.minecraft.asyncparticles.client.core.particle.gpu_acceleration.GpuParticleBehavior;
-import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleInstance;
-import net.mehvahdjukaar.polytone.content.particle.custom.CustomParticleType;
-import net.mehvahdjukaar.polytone.content.particle.custom.IRotationProvider;
-import net.mehvahdjukaar.polytone.content.particle.custom.ParticleRenderMode;
-import net.mehvahdjukaar.polytone.content.particle.custom.RotationMode;
+import fun.qu_an.minecraft.asyncparticles.client.core.particle.tick.AsyncTickBehavior;
+import fun.qu_an.minecraft.asyncparticles.client.util.ThreadUtil;
+import net.mehvahdjukaar.polytone.content.particle.custom.*;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -37,7 +39,7 @@ public abstract class MixinCustomParticleType implements PolytoneParticleTypeAdd
 	@Override
 	public boolean asyncparticles$isSimpleQuad() {
 		return rotationProvider == RotationMode.LOOK_AT_XYZ
-			&& CustomParticleType.RenderOffset.NONE.equals(offset)
+			&& offset.camera() == 0.0f
 			&& (renderType == ParticleRenderMode.TERRAIN
 			|| renderType == ParticleRenderMode.SOLID
 			|| renderType == ParticleRenderMode.CUTOUT
@@ -45,12 +47,37 @@ public abstract class MixinCustomParticleType implements PolytoneParticleTypeAdd
 			|| renderType == ParticleRenderMode.TRANSLUCENT);
 	}
 
+	@Override
+	public Vec3 asyncparticles$getWorldOffset() {
+		return offset.world();
+	}
+
+	@ModifyExpressionValue(method = "createParticle", remap = true, at = @At(value = "INVOKE", remap = false,
+		target = "Lnet/mehvahdjukaar/polytone/content/config/OptionHolder;get()Ljava/lang/Object;"))
+	private Object initParticlesAsync(Object offThread, @Local(ordinal = 0) CustomParticleInstance particle) {
+		// Polytone's pending list is main-thread-only; off-thread creation can initialize in place.
+		if (!ThreadUtil.isOnMainThread()) {
+			return false;
+		}
+		if (!ConfigHelper.isPolytoneAsyncTick()) {
+			return offThread;
+		}
+		if (ConfigHelper.isGpuOnlyAsyncParticleTick() || ConfigHelper.isPolytoneGpuOnlyAsyncTick()) {
+			return false;
+		}
+		// GPU particles must finish init before the main thread appends their rendering data.
+		if (ConfigHelper.isPolytoneGpuRendering() && ((PolytoneParticleAddon) particle).asyncparticles$canRenderFast()) {
+			return false;
+		}
+		return !AsyncTickBehavior.getInstance().shouldSyncRenderType(particle.getRenderType().getClass());
+	}
+
 	@ModifyReturnValue(method = "createParticle", at = @At("RETURN"), remap = true)
 	private Particle checkGpuExclusionRadius(Particle particle) {
 		if (particle == null) {
 			return null;
 		}
-		if (!ConfigHelper.isPolytoneTakeover()) {
+		if (!ConfigHelper.isPolytoneAsyncTick()) {
 			return particle;
 		}
 		if (exclusionRadius <= 0) {

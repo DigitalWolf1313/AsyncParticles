@@ -31,6 +31,6 @@ public abstract class MixinOptionHolder {
 		if (!asyncparticles$asyncTickOption) {
 			return original;
 		}
-		return Boolean.TRUE.equals(original) || (ConfigHelper.isAsyncParticleTick() && ConfigHelper.isPolytoneAsyncTick());
+		return Boolean.TRUE.equals(original) || ConfigHelper.isPolytoneAsyncTick();
 	}
 }

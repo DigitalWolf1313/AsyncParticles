@@ -68,7 +68,6 @@ public class AsyncParticlesConfig {
 	public static RainEffect valkyrienSkies$rainEffect;
 	public static boolean valkyrienSkies$fixParticleLights;
 	public static boolean sable$fixParticleLights;
-	public static boolean polytone$takeover;
 	public static boolean polytone$asyncTick;
 	public static boolean polytone$gpuOnlyAsyncTick;
 	public static boolean polytone$gpuRendering;
@@ -437,14 +436,12 @@ public class AsyncParticlesConfig {
 			boolean gpuRendering = true;
 
 			private void flat() {
-				polytone$takeover = takeover;
 				polytone$asyncTick = asyncTick;
 				polytone$gpuOnlyAsyncTick = gpuOnlyAsyncTick;
 				polytone$gpuRendering = gpuRendering;
 			}
 
 			private void fold() {
-				takeover = polytone$takeover;
 				asyncTick = polytone$asyncTick;
 				gpuOnlyAsyncTick = polytone$gpuOnlyAsyncTick;
 				gpuRendering = polytone$gpuRendering;

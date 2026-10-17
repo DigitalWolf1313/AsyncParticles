@@ -62,7 +62,7 @@
   "config.asyncparticles.category.mod-compat.create": "机械动力",
   "config.asyncparticles.category.mod-compat.polytone": "Polytone",
   "config.asyncparticles.mod-compat.polytone.mixin": "启用 Mixin",
-  "config.asyncparticles.mod-compat.polytone.mixin.tooltip": "启用我们的用于 Polytone 5.x 的 Mixin。",
+  "config.asyncparticles.mod-compat.polytone.mixin.tooltip": "启用我们的用于 Polytone 5.1+ 的 Mixin。",
   "config.asyncparticles.mod-compat.polytone.takeover": "接管 Polytone 粒子优化",
   "config.asyncparticles.mod-compat.polytone.takeover.tooltip": "为 Polytone 粒子启用我们的优化。",
   "config.asyncparticles.mod-compat.polytone.asyncTick": "接管 Polytone 异步粒子刻",

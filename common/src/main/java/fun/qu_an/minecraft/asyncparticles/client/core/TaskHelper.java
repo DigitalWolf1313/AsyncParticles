@@ -25,6 +25,12 @@ public final class TaskHelper {
 		tasks.add(task);
 	}
 
+	public ForkJoinTask<?> submitPrerequisite(@NotNull Runnable task) {
+		ForkJoinTask<?> future = executor.submit(task);
+		groups.add(0, new SequentialGroup(List.of(future::join)));
+		return future;
+	}
+
 	public void addTasks(Collection<? extends Runnable> tasks) {
 		this.tasks.addAll(tasks);
 	}
