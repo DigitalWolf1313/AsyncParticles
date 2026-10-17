@@ -117,7 +117,8 @@ public class ModListHelper {
 	/* Lambdynights */
 	public static final boolean LAMBDYNLIGHTS_LOADED = isModLoaded("lambdynlights");
 	/* Immersive Portals */
-	public static final boolean IMMERSIVE_PORTALS_LOADED = isModLoaded("immersive_portals");
+	public static final boolean IMMERSIVE_PORTALS_LOADED = isModLoaded("immersive_portals")
+		|| isModLoaded("immersive_portals_core");
 	/* CosyCritters */
 	public static final boolean COSYCRITTERS_LOADED = isModLoaded("cosycritters");
 	/* Reign of Nether */
