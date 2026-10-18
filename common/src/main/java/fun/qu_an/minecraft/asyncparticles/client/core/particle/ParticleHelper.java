@@ -33,7 +33,6 @@ public class ParticleHelper {
 	}
 
 	public static void onClearParticles() {
-		AsyncTickBehavior.getInstance().reset();
 		GpuParticleBehavior.getInstance().onClearParticles();
 		if (ModListHelper.A_GOOD_PLACE_LOADED) {
 			AGoodPlaceCompat.onParticleEngineClear();
