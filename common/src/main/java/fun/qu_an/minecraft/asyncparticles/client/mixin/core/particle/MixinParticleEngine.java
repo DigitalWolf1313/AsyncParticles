@@ -2,8 +2,10 @@ package fun.qu_an.minecraft.asyncparticles.client.mixin.core.particle;
 
 import fun.qu_an.minecraft.asyncparticles.client.addon.ParticleEngineAddon;
 import fun.qu_an.minecraft.asyncparticles.client.addon.ParticleGroupAddition;
+import fun.qu_an.minecraft.asyncparticles.client.config.AsyncParticlesConfig;
 import fun.qu_an.minecraft.asyncparticles.client.config.ConfigHelper;
 import fun.qu_an.minecraft.asyncparticles.client.core.particle.ParticleHelper;
+import fun.qu_an.minecraft.asyncparticles.client.core.particle.tick.AsyncTickBehavior;
 import fun.qu_an.minecraft.asyncparticles.client.core.particle.tick.TrackedParticleCountsMap;
 import fun.qu_an.minecraft.asyncparticles.client.util.BusyWaitEvictingQueue;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -41,13 +43,18 @@ public class MixinParticleEngine implements ParticleEngineAddon {
 	@Inject(order = 1500, method = "<init>", at = @At(value = "RETURN"))
 	public void initTail(CallbackInfo ci) {
 		trackedParticleCounts = new TrackedParticleCountsMap();
-		particlesToAdd = BusyWaitEvictingQueue.newInstance(1024, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
-		trackingEmitters = BusyWaitEvictingQueue.newInstance(256, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
+		particlesToAdd = BusyWaitEvictingQueue.newInstance(AsyncParticlesConfig.MIN_PARTICLE_LIMIT, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
+		trackingEmitters = BusyWaitEvictingQueue.newInstance(AsyncParticlesConfig.MIN_PARTICLE_LIMIT / 4, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
 	}
 
 	@Inject(method = "clearParticles", at = @At("HEAD"))
 	public void clearParticles(CallbackInfo ci) {
+		AsyncTickBehavior.getInstance().reset();
 		// Guarantee: call remove for each particle when clearing particles.
+		particlesToAdd.forEach(ParticleHelper::onClearParticle);
+		particlesToAdd = BusyWaitEvictingQueue.newInstance(AsyncParticlesConfig.MIN_PARTICLE_LIMIT, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
+		trackingEmitters.forEach(ParticleHelper::onClearParticle);
+		trackingEmitters = BusyWaitEvictingQueue.newInstance(AsyncParticlesConfig.MIN_PARTICLE_LIMIT / 4, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
 		particles.values().forEach(g -> ((ParticleGroupAddition) g).asyncparticles$onClearParticles());
 		ParticleHelper.onClearParticles();
 	}
