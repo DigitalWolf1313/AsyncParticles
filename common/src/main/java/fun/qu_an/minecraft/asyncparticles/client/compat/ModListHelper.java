@@ -73,6 +73,7 @@ public class ModListHelper {
 	public static final boolean FORGE_SIMPLE_WEATHER_LOADED = isForgeModLoaded("simple_weather");
 	/* Vulkan Mod */
 	public static final boolean VULKAN_MOD_LOADED = isModLoaded("vulkanmod");
+	public static final boolean VULKAN_MOD_0_6 = VULKAN_MOD_LOADED && versionCheck("vulkanmod", "0.6", "0.7");
 	/* Beryl */
 	public static final boolean BERYL_LOADED = isModLoaded("beryl");
 	/* Lodestone */
