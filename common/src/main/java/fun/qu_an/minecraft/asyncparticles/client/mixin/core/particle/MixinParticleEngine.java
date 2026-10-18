@@ -46,6 +46,7 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 
 	@Inject(method = "clearParticles", at = @At("HEAD"))
 	public void onClearParticles(CallbackInfo ci) {
+		AsyncTickBehavior.getInstance().reset();
 		particlesToAdd.forEach(ParticleHelper::onClearParticle);
 		particlesToAdd = BusyWaitEvictingQueue.newInstance(AsyncParticlesConfig.MIN_PARTICLE_LIMIT, ConfigHelper.getParticleLimit(), ParticleHelper::onEvict);
 		trackingEmitters.forEach(ParticleHelper::onClearParticle);
