@@ -334,7 +334,7 @@ class ClothConfigMenus {
 					displayConfig.rendering.cullWeathers)
 				.setDefaultValue(defaultConfig.rendering.cullWeathers)
 				.setTooltipSupplier(() -> {
-					if (Backends.supportsGpuAcceleration()) {
+					if (!MORE_CULLING_LOADED) {
 						return Optional.of(new MutableComponent[]{Component.translatable("config.asyncparticles.rendering.cullWeathers.tooltip")});
 					} else {
 						return Optional.of(new MutableComponent[]{

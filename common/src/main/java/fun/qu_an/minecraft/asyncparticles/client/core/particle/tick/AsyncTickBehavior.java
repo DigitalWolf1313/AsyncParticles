@@ -166,7 +166,7 @@ public class AsyncTickBehavior {
 			Collection<Queue<Particle>> queues = mc.particleEngine.particles.values();
 			for (Queue<Particle> queue : queues) {
 				if (!queues.isEmpty()) {
-					cleanupTaskHelper.addTask(() -> doParticlesRemoveIf(queue));
+					taskHelper.addTask(() -> doParticlesRemoveIf(queue));
 				}
 			}
 		}
@@ -174,7 +174,7 @@ public class AsyncTickBehavior {
 			Collection<Queue<TextureSheetParticle>> gpuQueues = GpuParticleBehavior.getInstance().gpuParticles.values();
 			for (Queue<TextureSheetParticle> queue : gpuQueues) {
 				if (!gpuQueues.isEmpty()) {
-					cleanupTaskHelper.addTask(() -> doParticlesRemoveIf(queue));
+					taskHelper.addTask(() -> doParticlesRemoveIf(queue));
 				}
 			}
 		}
