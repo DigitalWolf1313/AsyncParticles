@@ -2,6 +2,7 @@ package fun.qu_an.minecraft.asyncparticles.client.core.backend;
 
 import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
+import fun.qu_an.minecraft.asyncparticles.client.compat.ModListHelper;
 import fun.qu_an.minecraft.asyncparticles.client.util.MemStackUtil;
 import net.vulkanmod.vulkan.Vulkan;
 import org.lwjgl.opengl.GL;
@@ -44,7 +45,7 @@ public class Backends {
 			glCs = getGlCs(GL_ES, glCapabilities);
 			vk = new VkCommands.Unsupported();
 			backend = GL_ES ? Backend.OPENGL_ON_ES : Backend.OPENGL;
-		} else if (backendName.toLowerCase(Locale.ROOT).contains("vulkan")) {
+		} else if (backendName.toLowerCase(Locale.ROOT).contains("vulkan") && ModListHelper.VULKAN_MOD_0_6) {
 			gl = new GlCommands.Unsupported();
 			glTf = new GlCommands.TransformFeedback.Unsupported();
 			glCs = new GlCommands.ComputeShader.Unsupported();
