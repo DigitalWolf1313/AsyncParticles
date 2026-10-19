@@ -312,6 +312,8 @@ public class AsyncTickBehavior {
 		syncAnimationTypes.addAll(ConfigHelper.getSyncAnimationClassesTick());
 		syncParticleTypes.clear();
 		syncParticleTypes.addAll(ConfigHelper.getSyncParticleClassesTick());
+		syncParticles.clear();
+		syncGpuParticles.clear();
 	}
 
 	public void debugLater(Consumer<String> consumer) {
