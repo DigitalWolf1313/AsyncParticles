@@ -68,9 +68,8 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 				continue;
 			}
 			sum += size;
-			if (!tickAsync) {
+			if (!tickAsync || tickBehavior.shouldSyncRenderType(entry.getKey().getClass())) {
 				ParticleHelper.tickGpuParticles(() -> tickParticleList((Collection) queue));
-				tickBehavior.doParticlesRemoveIf(queue);
 			} else {
 				ParticleRenderType renderType = entry.getKey();
 				ParticleHelper.tickGpuParticles(() -> tickParticleList(tickBehavior.getSyncGpuParticles(renderType)));

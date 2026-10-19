@@ -335,6 +335,7 @@ public class GlTfParticleRenderer implements IParticleRenderer {
 		if (usingIdx < 0) {
 			throw new IllegalStateException("No published source slot for GPU particle rendering");
 		}
+		BufferUploader.invalidate();
 
 		int prevProgram = glGetInteger(GL_CURRENT_PROGRAM);
 		ParticleTransformFeedbackShader.INSTANCE.use();
