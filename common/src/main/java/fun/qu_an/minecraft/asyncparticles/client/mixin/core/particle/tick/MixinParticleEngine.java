@@ -19,7 +19,6 @@ import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TrackingEmitter;
-import net.minecraft.core.particles.ParticleGroup;
 import net.minecraft.util.profiling.ProfilerFiller;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
@@ -43,9 +42,6 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 
 	@Shadow
 	public abstract void tickParticle(Particle particle);
-
-	@Shadow
-	public abstract void updateCount(ParticleGroup group, int count);
 
 	@Shadow
 	protected ClientLevel level;
@@ -121,7 +117,8 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 				}).add(particle);
 				if (tickAsync
 //					&& ConfigHelper.isAsyncTickParticle() // tested in asyncparticles$canTickAsync()
-					&& tickBehavior.shouldSync(particle)) {
+					&& tickBehavior.shouldSync(particle)
+					&& !tickBehavior.shouldSyncRenderType(particle.getRenderType().getClass())) {
 					if (ConfigHelper.isGpuParticles() && GpuParticleBehavior.getInstance().canRenderFast(particle)) {
 						tickBehavior.getSyncGpuParticles(particle.getRenderType()).add(particle);
 					} else if (asyncAll) {
@@ -192,14 +189,8 @@ public abstract class MixinParticleEngine implements ParticleEngineAddon {
 			}
 		}
 		if (!isAsync) { // sync tick
-			collection.removeIf(p -> {
-				if (p.isAlive()) {
-					return false;
-				}
-				// make sure the tracked count is correct
-				p.getParticleGroup().ifPresent(group -> updateCount(group, -1));
-				return true;
-			});
+			// The owning queue updates group counts through ParticleHelper.onEvict.
+			collection.removeIf(p -> !p.isAlive());
 		}
 	}
 }
