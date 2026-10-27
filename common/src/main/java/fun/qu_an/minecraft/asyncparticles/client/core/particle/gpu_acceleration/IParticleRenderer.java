@@ -4,7 +4,6 @@ import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
 import fun.qu_an.minecraft.asyncparticles.client.addon.GpuParticleAddon;
 import fun.qu_an.minecraft.asyncparticles.client.compat.ModListHelper;
-import fun.qu_an.minecraft.asyncparticles.client.compat.immersive_portals.ImmersivePortalsCompat;
 import fun.qu_an.minecraft.asyncparticles.client.compat.particle_core.ParticleCoreCompat;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -32,7 +31,6 @@ public interface IParticleRenderer extends Closeable {
 	static boolean shouldRenderParticle(GpuParticleAddon gpuParticle, Vec3 camPos) {
 		// Defer distance culling until portal cameras are available.
 		return gpuParticle.asyncparticles$shouldRender()
-			&& (!ModListHelper.IMMERSIVE_PORTALS_LOADED || ImmersivePortalsCompat.shouldRenderParticle(gpuParticle))
 			&& (ModListHelper.IMMERSIVE_PORTALS_LOADED || !ModListHelper.PARTICLE_CORE_LOADED
 				|| ParticleCoreCompat.shouldRenderParticle(gpuParticle, camPos));
 	}
@@ -132,7 +130,7 @@ public interface IParticleRenderer extends Closeable {
 	void append(Vec3 cameraPos, TextureSheetParticle tsp);
 
 	/**
-	 * Called multiple per frame, but only computed once.
+	 * Called multiple per frame, recomputing when the camera or partial tick changes.
 	 * Called on main thread.
 	 */
 	void compute(Camera camera, float partialTicks);

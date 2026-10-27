@@ -10,7 +10,6 @@ import fun.qu_an.minecraft.asyncparticles.client.core.particle.gpu_acceleration.
 import fun.qu_an.minecraft.asyncparticles.client.mixin.compat.vulkanmod.AccessorBuffer;
 import fun.qu_an.minecraft.asyncparticles.client.util.MemStackUtil;
 import fun.qu_an.minecraft.asyncparticles.client.util.ThreadUtil;
-import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceArrayList;
 import net.minecraft.client.Camera;
 import net.minecraft.client.particle.ParticleRenderType;
@@ -283,21 +282,21 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 		int offset = particleLimit * vertexSize;
 		long bufferAddress = MemoryUtil.memAddress(mappedBuffer) + offset;
 
-		Map<ParticleRenderType, List<TextureSheetParticle>> layerMap = new Reference2ReferenceOpenHashMap<>();
+		Map<ParticleBatchKey, List<TextureSheetParticle>> layerMap = new LinkedHashMap<>();
 		for (int i = 0, pendingSize = Math.min(particleLimit, appendCount); i < pendingSize; i++) {
 			TextureSheetParticle p = pending.get(i);
-			layerMap.computeIfAbsent(p.getRenderType(), a -> new ReferenceArrayList<>(appendCount / 2)).add(p);
+			layerMap.computeIfAbsent(ParticleBatchKey.of(p), a -> new ReferenceArrayList<>()).add(p);
 		}
 
 		int baseCount = 0;
 		int baseWrite = 0;
 		try (MemoryStack stack = MemStackUtil.stackPush()) {
 			long address = stack.nmalloc(vertexSize);
-			for (Map.Entry<ParticleRenderType, List<TextureSheetParticle>> entry : layerMap.entrySet()) {
+			for (Map.Entry<ParticleBatchKey, List<TextureSheetParticle>> entry : layerMap.entrySet()) {
 				List<TextureSheetParticle> list = entry.getValue();
 				LayerBatch batch = null;
 				for (LayerBatch b : batches) {
-					if (b.layer == entry.getKey()) {
+					if (b.key.equals(entry.getKey())) {
 						batch = b;
 						break;
 					}
@@ -383,7 +382,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 		int baseCount = 0;
 		try (MemoryStack stack = MemStackUtil.stackPush()) {
 			final long address = stack.nmalloc(vertexSize);
-			for (Map.Entry<ParticleRenderType, T> entry : particles.entrySet()) {
+			for (Map.Entry<ParticleBatchKey, Collection<TextureSheetParticle>> entry : ParticleBatchKey.groupParticles(particles).entrySet()) {
 				Collection<TextureSheetParticle> collection = entry.getValue();
 				if (baseCount + collection.size() > particleLimit) {
 					throw new IllegalStateException("Particle limit exceeded! particle limit: " + particleLimit
@@ -579,7 +578,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 			return;
 		}
 		RenderSystem.assertOnRenderThread();
-		ComputeResult.ParticleSlice particleSlice = computeResult.slices().get(renderType);
+		ComputeResult.ParticleSlice particleSlice = computeResult.sliceForRender(renderType);
 		if (particleSlice == null) {
 			return;
 		}
@@ -634,7 +633,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 			return List.of();
 		}
 		List<LayerBatch> batches = sourceSlots[renderSrcIdx].layerBatches;
-		ArrayList<ParticleRenderType> result = new ArrayList<>(batches.size());
+		Set<ParticleRenderType> result = new LinkedHashSet<>();
 		for (LayerBatch b : batches) {
 			result.add(b.layer);
 		}
@@ -704,7 +703,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 		private int totalCount;
 		private int workgroupCount;
 		private int[] groupRecords = EMPTY_INT_ARR;
-		private Map<ParticleRenderType, ComputeResult.ParticleSlice> slices = Map.of();
+		private Map<ParticleBatchKey, ComputeResult.ParticleSlice> slices = Map.of();
 		private boolean prepared;
 
 		private void createBuffer(int size) {
@@ -768,7 +767,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 
 			List<LayerBatch> batches = this.layerBatches;
 			int sz = batches.size();
-			this.slices = new Reference2ReferenceOpenHashMap<>();
+			this.slices = new HashMap<>();
 
 			int groups = 0;
 			for (LayerBatch batch : batches) {
@@ -781,7 +780,7 @@ public class VkCompParticleRenderer implements IParticleRenderer {
 			for (int i = 0; i < sz; i++) {
 				LayerBatch batch = batches.get(i);
 				int layerTotal = batch.tickCount + batch.appendCount;
-				this.slices.put(batch.layer, new ComputeResult.ParticleSlice(batch.layer, dstBase, layerTotal));
+				this.slices.put(batch.key, new ComputeResult.ParticleSlice(batch.layer, dstBase, layerTotal));
 				recordPos = writeSegmentGroups(records, recordPos, batch.tickOffset, dstBase, batch.tickCount);
 				recordPos = writeSegmentGroups(records, recordPos,
 					particleLimit + batch.appendOffset,
