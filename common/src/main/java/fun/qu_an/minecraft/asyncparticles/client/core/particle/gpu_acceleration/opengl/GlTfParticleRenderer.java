@@ -56,6 +56,7 @@ public class GlTfParticleRenderer implements IParticleRenderer {
 
 	private boolean shouldSkip = true;
 	private boolean computed = false;
+	private CameraState computedCamera;
 	private ComputeResult computeResult;
 
 	public GlTfParticleRenderer(int particleLimit) {
@@ -81,6 +82,7 @@ public class GlTfParticleRenderer implements IParticleRenderer {
 	@Override
 	public void beginFrame(float deltaPartialTick) {
 		computed = false;
+		computedCamera = null;
 	}
 
 	@Override
@@ -321,7 +323,8 @@ public class GlTfParticleRenderer implements IParticleRenderer {
 
 	@Override
 	public void compute(Camera camera, float partialTicks) {
-		if (computed) {
+		CameraState cameraState = CameraState.of(camera, partialTicks);
+		if (computed && cameraState.equals(computedCamera)) {
 			return;
 		}
 		if (shouldSkip) {
@@ -375,6 +378,7 @@ public class GlTfParticleRenderer implements IParticleRenderer {
 		GL30C.glUseProgram(prevProgram);
 
 		computed = true;
+		computedCamera = cameraState;
 	}
 
 	@Override

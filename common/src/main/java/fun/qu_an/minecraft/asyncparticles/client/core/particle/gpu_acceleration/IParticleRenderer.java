@@ -12,16 +12,29 @@ import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.TextureSheetParticle;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Vector3f;
 
 import java.io.Closeable;
 import java.util.Collection;
 import java.util.Map;
 
 public interface IParticleRenderer extends Closeable {
+	record CameraState(Vec3 position, Vector3f left, Vector3f up, float partialTicks) {
+		public static CameraState of(Camera camera, float partialTicks) {
+			return new CameraState(
+				camera.getPosition(),
+				new Vector3f(camera.getLeftVector()),
+				new Vector3f(camera.getUpVector()),
+				partialTicks);
+		}
+	}
+
 	static boolean shouldRenderParticle(GpuParticleAddon gpuParticle, Vec3 camPos) {
+		// Defer distance culling until portal cameras are available.
 		return gpuParticle.asyncparticles$shouldRender()
 			&& (!ModListHelper.IMMERSIVE_PORTALS_LOADED || ImmersivePortalsCompat.shouldRenderParticle(gpuParticle))
-			&& (!ModListHelper.PARTICLE_CORE_LOADED || ParticleCoreCompat.shouldRenderParticle(gpuParticle, camPos));
+			&& (ModListHelper.IMMERSIVE_PORTALS_LOADED || !ModListHelper.PARTICLE_CORE_LOADED
+				|| ParticleCoreCompat.shouldRenderParticle(gpuParticle, camPos));
 	}
 
 	static void prepareShader(ShaderInstance shader) {
