@@ -29,7 +29,7 @@ public interface IParticleRenderer extends Closeable {
 	}
 
 	static boolean shouldRenderParticle(GpuParticleAddon gpuParticle, Vec3 camPos) {
-		// Defer distance culling until portal cameras are available.
+		// Skip Particle Core distance culling because this camera position may not match portal views.
 		return gpuParticle.asyncparticles$shouldRender()
 			&& (ModListHelper.IMMERSIVE_PORTALS_LOADED || !ModListHelper.PARTICLE_CORE_LOADED
 				|| ParticleCoreCompat.shouldRenderParticle(gpuParticle, camPos));
